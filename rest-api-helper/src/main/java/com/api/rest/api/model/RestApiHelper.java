@@ -1,5 +1,9 @@
 package com.api.rest.api.model;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -11,20 +15,29 @@ public class RestApiHelper {
 	
 	public static RestResponse performGetRequest(String url)
 	{
-		HttpGet get=new HttpGet(url);
-		try(CloseableHttpClient client= HttpClientBuilder.create().build();
-				CloseableHttpResponse response=client.execute(get)) 
-			{	
-				ResponseHandler<String> body =new BasicResponseHandler();
-				RestResponse restResponse= new RestResponse(response.getStatusLine().getStatusCode(), body.handleResponse(response) );
-				/*System.out.println(restResponse.toString());*/
-				return restResponse;
-				
-			} catch (Exception e) {
-				
-				throw new RuntimeException(e.getMessage(), e);
-			} 
+		try {
+			return performGetRequest(new URI(url));
+		} catch (URISyntaxException e) {
+
+			throw new RuntimeException(e.getMessage(), e);
+		}
 		
 	}
-
+	
+	public static RestResponse performGetRequest(URI uri)
+	{
+		HttpGet get = new HttpGet(uri);
+		CloseableHttpResponse response=null;
+		
+		try (CloseableHttpClient client = HttpClientBuilder.create().build();
+				) {
+			response = client.execute(get);
+			ResponseHandler<String> body = new BasicResponseHandler();
+			return new RestResponse(response.getStatusLine().getStatusCode(), body.handleResponse(response));
+		} catch (Exception e) {
+			if(e instanceof HttpResponseException)
+				return new RestResponse(response.getStatusLine().getStatusCode(), e.getMessage());
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
 }
