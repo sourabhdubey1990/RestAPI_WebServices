@@ -2,6 +2,7 @@ package com.api.rest.api.model;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -13,10 +14,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 public class RestApiHelper {
 	
-	public static RestResponse performGetRequest(String url)
+	public static RestResponse performGetRequest(String url,Map<String,String> headers)
 	{
 		try {
-			return performGetRequest(new URI(url));
+			return performGetRequest(new URI(url),headers);
 		} catch (URISyntaxException e) {
 
 			throw new RuntimeException(e.getMessage(), e);
@@ -24,9 +25,14 @@ public class RestApiHelper {
 		
 	}
 	
-	public static RestResponse performGetRequest(URI uri)
+	public static RestResponse performGetRequest(URI uri,Map<String,String> headers)
 	{
 		HttpGet get = new HttpGet(uri);
+		if(headers!=null) {
+			for(String str:headers.keySet())
+				get.addHeader(str, headers.get(str));
+		}
+		
 		CloseableHttpResponse response=null;
 		
 		try (CloseableHttpClient client = HttpClientBuilder.create().build();

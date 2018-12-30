@@ -17,7 +17,7 @@ public class GetRequest {
 
 	public static void main(String[] args) {
 		
-		RestResponse response=RestApiHelper.performGetRequest("http://localhost:8080/laptop-bag/webapi/prompt/ping/Hello");
+		RestResponse response=RestApiHelper.performGetRequest("http://localhost:8080/laptop-bag/webapi/prompt/ping/Hello",null);
 		System.out.println(response.toString());
 		
 
