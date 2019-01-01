@@ -1,0 +1,9 @@
+{
+ "BrandName": "Essar",
+ "Features": {
+  "Feature": ["8GB RAM",
+  "1TB Hard Drive"]
+ },
+ "Id": 128,
+ "LaptopName": "Latitude"
+}
