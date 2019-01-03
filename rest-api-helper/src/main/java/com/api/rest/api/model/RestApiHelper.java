@@ -1,16 +1,19 @@
 package com.api.rest.api.model;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -50,7 +53,17 @@ public class RestApiHelper {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
-	public static RestResponse performPostRequest(String url,String content,Map<String,String> headers)
+	
+	private static HttpEntity getHttpEntity(Object content,ContentType type)
+	{if (content instanceof String)
+		return new StringEntity((String)content,type );
+	else if (content instanceof File)
+		return new FileEntity((File)content, type);
+	else 
+		throw new RuntimeException("Entity Type Not Found");
+		
+	}
+	public static RestResponse performPostRequest(String url,Object content,ContentType type,Map<String,String> headers)
 	{
 		CloseableHttpResponse response= null;
 		HttpPost post=new HttpPost(url);
@@ -60,7 +73,7 @@ public class RestApiHelper {
 				post.addHeader(key, headers.get(key));
 			}
 		}
-		post.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
+		post.setEntity(getHttpEntity(content, type));
 		try(CloseableHttpClient client = HttpClientBuilder.create().build();) {
 			
 			response=client.execute(post);

@@ -34,7 +34,7 @@ public class GetRequest {
 					"\"1TB Hard Drive\","+
 					"\"Display Blank\"]"+
 				"},"+
-				"\"Id\": 132,"+
+				"\"Id\": 133,"+
 				"\"LaptopName\": \"Sourabh\""+
 			"}";
 		/*HttpPost post= new HttpPost("http://localhost:8080/laptop-bag/webapi/prompt/add");*/
@@ -59,7 +59,9 @@ public class GetRequest {
 		Map<String, String> headers=new LinkedHashMap<>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
-		RestResponse response=RestApiHelper.performPostRequest("http://localhost:8080/laptop-bag/webapi/prompt/add", jsonBody, headers);
+		File file=new File("TestDataFile");
+		FileEntity data=new FileEntity(file, ContentType.APPLICATION_JSON);
+		RestResponse response=RestApiHelper.performPostRequest("http://localhost:8080/laptop-bag/webapi/prompt/add", file,ContentType.APPLICATION_JSON, headers);
 		System.out.println(response.toString());
 		
 
